@@ -6,6 +6,10 @@
 4. 分析公司熱門需求技能
 5. 將資料儲存至excel
 
+## Pandas分析
+- [x] 篩選學歷與經驗
+- [ ] 統計各項技能佔比
+- [ ] 職缺與地區關係
 ## 遇到問題
 ```
 list index out of range
@@ -16,3 +20,4 @@ list index out of range
 ```python
 jobs = driver.find_elements(By.CSS_SELECTOR, "div#js-job-content article")
 ```
+參考網址：https://jzchangmark.wordpress.com/2015/03/16/selenium-%E4%BD%BF%E7%94%A8-css-locator-%E5%AE%9A%E4%BD%8D%E5%85%83%E4%BB%B6/

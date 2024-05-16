@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
 import pandas as pd
-from tabulate import tabulate
+import csv
 
 def crawl_detail(driver, title):
     # window
@@ -123,14 +123,25 @@ def setup_crawler():
     driver.close()
 
     # save to excel
-    data.to_csv("all_job.csv", index=False)
+    data.to_csv('all_jobs.csv', index=False)
+
+def analyze():
+    data = pd.read_csv('all_jobs.csv', header=0)
+    # print(data)
+
+    # filter
+    condition1 = (data["經驗"] == "經歷不拘") & (data["學位"] != "碩士")
+    new_data = data[condition1]
+    # print(new_data)
+
+    condition2 = data['技能'].str.contains('Python')
+    best_skill = data[condition2]
+    print(best_skill.shape[0])
 
 def main():
-    setup_crawler()
+    # setup_crawler()
+    analyze()
 
-# filter
-# condition1 = (data["經驗"] == "經歷不拘") & (data["學位"] != "碩士")
-# new_data = data[condition1]
 
 
 if __name__ == '__main__':
