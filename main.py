@@ -17,7 +17,6 @@ def crawl(page):
 
         for job in jobs:
             try:
-                # window
 
                 title = job.find_elements(By.TAG_NAME, "a")[0]
 
@@ -31,8 +30,7 @@ def crawl(page):
 
                 degree = job.find_element(By.CLASS_NAME, "job-list-intro").find_elements(By.TAG_NAME, "li")[2].text
 
-                # all_windows = driver.window_handles
-                # new_window = [window for window in all_windows if window != main_window][0]
+                # window
                 main_window = driver.current_window_handle
                 title.click()
                 time.sleep(2)
@@ -40,22 +38,28 @@ def crawl(page):
                 new_window = driver.window_handles[1]
 
                 driver._switch_to.window(new_window)
-                
+                skill_list = []
                 try:
-                    skill = driver.find_element(By.CSS_SELECTOR, "a[class='tools text-gray-deep-dark d-inline-block']").text
-                except Exception as e:
-                    table = driver.find_elements(By.CSS_SELECTOR, "div[class='job-requirement-table row'] div[class='list-row row mb-2']")[4]
-                    skill = table.find_element(By.CSS_SELECTOR, "div[class='t3 mb-0']").text
-                print(skill)
+                    skills = driver.find_elements(By.CSS_SELECTOR, "a[class='tools text-gray-deep-dark d-inline-block']")
+                    if skills:
+                        for skill in skills:
+                            skill_list.append(skill.text)
+                    else:
+                        table = driver.find_elements(By.CSS_SELECTOR, "div[class='job-requirement-table row'] div[class='list-row row mb-2']")[4]
+                        skill = table.find_element(By.CSS_SELECTOR, "div[class='t3 mb-0']").text
+                        skill_list.append(skill)
 
+                except Exception as e:
+                    print(f"detail page:{e}")
+                
                 time.sleep(3)
                 driver.close()
                 driver.switch_to.window(main_window)
 
-                all_jobs.append({"職缺名稱":job_name, "公司名稱":company, "位置":locate, "經驗":experience, "學位":degree})
+                all_jobs.append({"職缺名稱":job_name, "公司名稱":company, "位置":locate, "經驗":experience, "學位":degree, "技能":skill_list})
 
             except Exception as e:
-                print(e)
+                print(f"main page:{e}")
                 # print(len(jobs))
         print(f"Page {count+1} completed!")
 
