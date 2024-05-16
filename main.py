@@ -6,7 +6,7 @@ import time
 import pandas as pd
 from tabulate import tabulate
 
-def crawl_detail(title):
+def crawl_detail(driver, title):
     # window
     main_window = driver.current_window_handle
     title.click()
@@ -37,7 +37,7 @@ def crawl_detail(title):
 
     return skill_str
 
-def crawl(page):
+def crawl_jobs(driver, page):
     count = 0
     all_jobs = []
 
@@ -64,7 +64,7 @@ def crawl(page):
 
                 degree = job.find_element(By.CLASS_NAME, "job-list-intro").find_elements(By.TAG_NAME, "li")[2].text
 
-                skill = crawl_detail(title)
+                skill = crawl_detail(driver, title)
 
                 all_jobs.append({"職缺名稱":job_name, "公司名稱":company, "位置":locate, "經驗":experience, "學位":degree, "技能":skill, "連結":link})
 
@@ -81,52 +81,57 @@ def crawl(page):
 
     return pd.DataFrame(all_jobs)
 
-# driver path
-options = Options()
-options.executable_chrome_path = "/Users/nidawei/git-repos/104-job-crawler/chromedriver"
+def setup_crawler():
+    # driver path
+    options = Options()
+    options.executable_chrome_path = "/Users/nidawei/git-repos/104-job-crawler/chromedriver"
 
-# url path
-driver = webdriver.Chrome(options=options)
-driver.get("https://www.104.com.tw/jobs/main/")
-time.sleep(2)
+    # url path
+    driver = webdriver.Chrome(options=options)
+    driver.get("https://www.104.com.tw/jobs/main/")
+    time.sleep(2)
 
-area = driver.find_element(By.XPATH,"//button/span[contains(text(), '地區')]")
-area.click()
-time.sleep(2)
-taipei = driver.find_element(By.CSS_SELECTOR, "input[value='6001001000']")
-taipei.click()
-new_taipei = driver.find_element(By.CSS_SELECTOR, "input[value='6001002000']")
-new_taipei.click()
-time.sleep(2)
-area_confirm_btn = driver.find_element(By.CLASS_NAME, "category-picker-btn-primary")
-area_confirm_btn.click()
-time.sleep(2)
-category = driver.find_element(By.XPATH, "//button/span[contains(text(), '職務類別')]")
-category.click()
-time.sleep(2)
-information = driver.find_element(By.LINK_TEXT, "資訊軟體系統類")
-information.click()
-software = driver.find_element(By.CSS_SELECTOR, "input[value='2007001000']")
-software.click()
-time.sleep(2)
-information_confirm = driver.find_element(By.CLASS_NAME, "category-picker-btn-primary")
-information_confirm.click()
-time.sleep(2)
-search = driver.find_element(By.CLASS_NAME, "btn-secondary")
-search.click()
-time.sleep(5)
+    area = driver.find_element(By.XPATH,"//button/span[contains(text(), '地區')]")
+    area.click()
+    time.sleep(2)
+    taipei = driver.find_element(By.CSS_SELECTOR, "input[value='6001001000']")
+    taipei.click()
+    new_taipei = driver.find_element(By.CSS_SELECTOR, "input[value='6001002000']")
+    new_taipei.click()
+    time.sleep(2)
+    area_confirm_btn = driver.find_element(By.CLASS_NAME, "category-picker-btn-primary")
+    area_confirm_btn.click()
+    time.sleep(2)
+    category = driver.find_element(By.XPATH, "//button/span[contains(text(), '職務類別')]")
+    category.click()
+    time.sleep(2)
+    information = driver.find_element(By.LINK_TEXT, "資訊軟體系統類")
+    information.click()
+    software = driver.find_element(By.CSS_SELECTOR, "input[value='2007001000']")
+    software.click()
+    time.sleep(2)
+    information_confirm = driver.find_element(By.CLASS_NAME, "category-picker-btn-primary")
+    information_confirm.click()
+    time.sleep(2)
+    search = driver.find_element(By.CLASS_NAME, "btn-secondary")
+    search.click()
+    time.sleep(5)
 
-# job crawler
-data = crawl(1)
-# print(tabulate(data, headers='keys', tablefmt='psql'))
+    # job crawler
+    data = crawl_jobs(driver, 1)
+    # print(tabulate(data, headers='keys', tablefmt='psql'))
+    driver.close()
+
+    # save to excel
+    data.to_csv("all_job.csv", index=False)
+
+def main():
+    setup_crawler()
 
 # filter
-condition1 = (data["經驗"] == "經歷不拘") & (data["學位"] != "碩士")
-new_data = data[condition1]
+# condition1 = (data["經驗"] == "經歷不拘") & (data["學位"] != "碩士")
+# new_data = data[condition1]
 
-# save to excel
-data.to_excel("all_job.xlsx")
-new_data.to_excel("filter_job.xlsx")
 
-# time.sleep(1000)
-driver.close()
+if __name__ == '__main__':
+    main()
