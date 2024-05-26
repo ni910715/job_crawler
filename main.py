@@ -125,22 +125,22 @@ def setup_crawler():
     # save to excel
     data.to_csv('all_jobs.csv', index=False)
 
-def analyze():
+def analyze(input_skill):
     data = pd.read_csv('all_jobs.csv', header=0)
-    # print(data)
-
     # filter
-    condition1 = (data["經驗"] == "經歷不拘") & (data["學位"] != "碩士")
-    new_data = data[condition1]
+    # condition1 = (data["經驗"] == "經歷不拘") & (data["學位"] != "碩士")
+    # new_data = data[condition1]
     # print(new_data)
-
-    condition2 = data['技能'].str.contains('Python')
+    data['技能'] = data['技能'].str.split(', ') # 將原本以 , 分隔的技能字串轉換回list
+    condition2 = data['技能'].apply(lambda skills: input_skill in skills) # 將list的每一項確認是否包含指定技能
     best_skill = data[condition2]
-    print(best_skill.shape[0])
+    print(f'{input_skill}相關的職缺有{best_skill.shape[0]}個') # .shape[0]代表印出列數量
 
 def main():
     # setup_crawler()
-    analyze()
+
+    input_skill = input('輸入搜尋技能：')
+    analyze(input_skill)
 
 
 
