@@ -8,7 +8,8 @@
 
 ## Pandas分析
 - [x] 篩選學歷與經驗
-- [ ] 統計各項技能佔比
+- [x] 統計各項技能次數
+- [x] 將資料可視化
 - [ ] 職缺與地區關係
 ## 遇到問題
 ### 元素定位數量錯誤
@@ -42,4 +43,14 @@ condition2 = data['技能'].apply(lambda skills: input_skill in skills) # 將lis
 最後透過`.shape()`顯示數量。
 ```python
 print(f'{input_skill}相關的職缺有{best_skill.shape[0]}個')
+```
+
+### matplotlib字型問題
+```python
+UserWarning: Glyph 39006 (\N{CJK UNIFIED IDEOGRAPH-985E}) missing from current font. fig.canvas.print_figure(bytes_io, **kw)
+```
+**解決辦法：**
+```python
+plt.rcParams['font.sans-serif'] = ['Arial Unicode Ms']
+plt.rcParams['axes.unicode_minus'] = False
 ```
